@@ -13,7 +13,13 @@ const INQUILINO_COST = 100;
 // Costo de subir de nivel
 const LEVEL_UP_COST = 200;
 
+// Variables de tiempo
+let gameTime = 0; 
 
+
+
+const timeElement = document.getElementById('game-time');
+const daysElement = document.getElementById('game-days');
 const moneyElement = document.getElementById("money");
 const propertiesList = document.getElementById("properties-list");
 const myPropertiesList = document.getElementById("my-properties-list");
@@ -98,13 +104,16 @@ function subirNivel(id) {
         // Eliminar la clase de animación después de que termine
         setTimeout(() => {
             levelElement.classList.remove("level-up-animation");
-        }, 500); // Duración de la animación
+        }, 500);
     } else {
         alert(`No tienes suficiente dinero para subir de nivel. Necesitas $${cost}.`);
     }
 }
-// Cobrar alquiler automáticamente cada 1:00 minuto
+
+
+// Cobrar alquiler y actualizar tiempo cada 1 minuto real (60000 ms)
 setInterval(() => {
+    
     if (myProperties.length > 0) {
         let totalRent = 0;
         myProperties.forEach(property => {
@@ -115,10 +124,30 @@ setInterval(() => {
         if (totalRent > 0) {
             money += totalRent;
             updateMoney();
-            alert(`Se ha cobrado el alquiler. Has recibido $${totalRent}.`);
+            showNotification(`Se ha cobrado el alquiler. Has recibido $${totalRent}.`);
         }
     }
-}, 60000); 
+    
+    
+    updateGameTime();
+}, 60000);
+
+
+
+// Función para actualizar el tiempo del juego
+function updateGameTime() {
+    gameTime += 1; 
+   
+    if(gameTime >= 24) {
+        gameTime = 0;
+    }
+    
+    const formattedTime = gameTime.toString().padStart(2, '0') + ":00";
+    timeElement.textContent = `Hora: ${formattedTime}`;
+}
+
+
+
 
 // Actualizar el dinero en la interfaz
 function updateMoney() {
@@ -146,4 +175,5 @@ function showNotification(message) {
 // Inicializar el juego
 renderProperties();
 renderMyProperties();
+updateGameTime();
 updateMoney();
